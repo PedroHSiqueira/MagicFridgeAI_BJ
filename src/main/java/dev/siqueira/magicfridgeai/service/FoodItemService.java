@@ -24,17 +24,22 @@ public class FoodItemService {
         return foodItemRepository.findAll();
     }
 
-    public FoodItemModel updateItem(FoodItemModel foodItemModel) {
-        Optional<FoodItemModel> foodItemModelOptional = foodItemRepository.findById(foodItemModel.getId());
+    public FoodItemModel findById(Long id){
+        return foodItemRepository.findById(id).orElse(null);
+    }
+
+    public FoodItemModel updateItem(Long id) {
+        Optional<FoodItemModel> foodItemModelOptional = foodItemRepository.findById(id);
         if (foodItemModelOptional.isPresent()) {
             FoodItemModel foodItemSalvo = foodItemModelOptional.get();
+            foodItemSalvo.setId(id);
             return foodItemRepository.save(foodItemSalvo);
         }
         return null;
     }
 
-    public Boolean deleteItem(FoodItemModel foodItemModel) {
-        Optional<FoodItemModel> foodItemModelOptional = foodItemRepository.findById(foodItemModel.getId());
+    public Boolean deleteItem(Long id) {
+        Optional<FoodItemModel> foodItemModelOptional = foodItemRepository.findById(id);
         if (foodItemModelOptional.isPresent()) {
             foodItemRepository.delete(foodItemModelOptional.get());
             return true;

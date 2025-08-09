@@ -4,9 +4,7 @@ import dev.siqueira.magicfridgeai.model.FoodItemModel;
 import dev.siqueira.magicfridgeai.service.FoodItemService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -20,28 +18,41 @@ public class FoodItemController {
         this.foodItemService = foodItemService;
     }
 
+    @PostMapping
     public ResponseEntity<FoodItemModel> createItem(@RequestBody FoodItemModel foodItemModel) {
         FoodItemModel foodItemSalvo = foodItemService.saveItem(foodItemModel);
         return ResponseEntity.status(HttpStatus.CREATED).body(foodItemSalvo);
     }
 
+    @GetMapping("/all")
     public ResponseEntity<List<FoodItemModel>> findAllItens() {
         return ResponseEntity.status(HttpStatus.OK).body(foodItemService.findAll());
     }
 
-    public ResponseEntity<FoodItemModel> updateItem(@RequestBody FoodItemModel foodItemModel) {
-        FoodItemModel foodItemSalvo = foodItemService.updateItem(foodItemModel);
-        if (foodItemSalvo != null) {
-            return ResponseEntity.status(HttpStatus.OK).body(foodItemModel);
+    @GetMapping("/byId/{id}")
+    public ResponseEntity<?> findById(@PathVariable Long id) {
+        FoodItemModel foodItem = foodItemService.findById(id);
+        if (foodItem != null) {
+            return ResponseEntity.status(HttpStatus.OK).body(foodItem);
         }
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Entidade não encontrada!");
     }
 
-    public ResponseEntity<FoodItemModel> deleteItem(@RequestBody FoodItemModel foodItemModel) {
-        Boolean isDeleted = foodItemService.deleteItem(foodItemModel);
-        if (isDeleted) {
-            return ResponseEntity.status(HttpStatus.OK).body(foodItemModel);
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateItem(@PathVariable Long id) {
+        FoodItemModel foodItemSalvo = foodItemService.updateItem(id);
+        if (foodItemSalvo != null) {
+            return ResponseEntity.status(HttpStatus.OK).body("Entidade de ID:" + id + " Foi Atualizada!");
         }
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Entidade não encontrada!");
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deleteItem(@PathVariable Long id) {
+        Boolean isDeleted = foodItemService.deleteItem(id);
+        if (isDeleted) {
+            return ResponseEntity.status(HttpStatus.OK).body("Entidade de ID:" + id + " Foi Deletada!");
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Não doi Possivel Deletar a Entidade!");
     }
 }
