@@ -2,6 +2,7 @@ package dev.siqueira.magicfridgeai.controller;
 
 import dev.siqueira.magicfridgeai.service.ChatGptService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Mono;
 
@@ -14,7 +15,10 @@ public class RecipeController {
         this.chatGptService = chatGptService;
     }
 
-    private Mono<ResponseEntity<String>> generateRecipe(){
-        return chatGptService.generateRecipe();
+    @GetMapping("/generate")
+    private Mono<ResponseEntity<String>> generateRecipe() {
+        return chatGptService.generateRecipe()
+                .map(recipe -> ResponseEntity.status(200).body(recipe))
+                .defaultIfEmpty(ResponseEntity.notFound().build());
     }
 }
