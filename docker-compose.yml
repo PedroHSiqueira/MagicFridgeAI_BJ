@@ -1,0 +1,9 @@
+services:
+  postgress:
+    image: 'postgres:latest'
+    environment:
+      - 'POSTGRES_DB=food_item'
+      - 'POSTGRES_USER=sa'
+      - 'POSTGRES_PASSWORD=magic'
+    ports:
+      - '5432:5432'
